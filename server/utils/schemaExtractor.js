@@ -7,7 +7,7 @@ async function extractSchema() {
     const [tables] = await connection.query(`
       SELECT TABLE_NAME 
       FROM INFORMATION_SCHEMA.TABLES 
-      WHERE TABLE_SCHEMA = '${process.env.DB_NAME}'
+      WHERE TABLE_SCHEMA = DATABASE()
     `);
     
     let schema = '';
