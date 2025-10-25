@@ -2,7 +2,7 @@ const axios = require("axios");
 const { ROLE_PERMISSIONS } = require("../middleware/roleValidator");
 require("dotenv").config();
 
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
 async function generateSQL(naturalLanguageQuery, schema, userRole = "USER") {
   // Get role permissions
