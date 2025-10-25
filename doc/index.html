@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLQ-to-SQL Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #667eea;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .flow-diagram {
+            background: #f5f7fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            background: white;
+            border-left: 5px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .flow-step::before {
+            content: '↓';
+            position: absolute;
+            left: 50%;
+            bottom: -25px;
+            transform: translateX(-50%);
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .flow-step:last-child::before {
+            display: none;
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f7fa;
+        }
+
+        .file-tree {
+            background: #2d3748;
+            color: #cbd5e0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .file {
+            color: #68d391;
+        }
+
+        .folder {
+            color: #63b3ed;
+            font-weight: bold;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #cbd5e0;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .badge-frontend {
+            background: #63b3ed;
+            color: white;
+        }
+
+        .badge-backend {
+            background: #68d391;
+            color: white;
+        }
+
+        .badge-database {
+            background: #f6ad55;
+            color: white;
+        }
+
+        .badge-ai {
+            background: #fc8181;
+            color: white;
+        }
+
+        .architecture-box {
+            background: white;
+            border: 3px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .architecture-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .architecture-component {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .arrow {
+            font-size: 30px;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .tech-card {
+            background: #f5f7fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .tech-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 NLQ-to-SQL Library System</h1>
+            <p class="subtitle">Complete Technical Documentation</p>
+            <div>
+                <span class="badge badge-frontend">React Frontend</span>
+                <span class="badge badge-backend">Express Backend</span>
+                <span class="badge badge-database">MySQL Database</span>
+                <span class="badge badge-ai">Gemini AI</span>
+            </div>
+        </header>
+
+        <!-- System Architecture -->
+        <div class="section">
+            <h2>🏗️ System Architecture</h2>
+            <div class="architecture-box">
+                <div class="architecture-row">
+                    <div class="architecture-component">
+                        <h3>Frontend (React)</h3>
+                        <p>User Interface</p>
+                        <p>Material-UI Components</p>
+                    </div>
+                </div>
+                <div class="arrow">↓ HTTP Requests ↓</div>
+                <div class="architecture-row">
+                    <div class="architecture-component">
+                        <h3>Backend (Express)</h3>
+                        <p>API Endpoints</p>
+                        <p>Business Logic</p>
+                    </div>
+                </div>
+                <div class="arrow">↙ SQL ↓ AI ↘</div>
+                <div class="architecture-row">
+                    <div class="architecture-component">
+                        <h3>MySQL DB</h3>
+                        <p>Aiven Cloud</p>
+                    </div>
+                    <div class="architecture-component">
+                        <h3>Gemini AI</h3>
+                        <p>NLQ → SQL</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Flow -->
+        <div class="section">
+            <h2>🔄 Complete API Flow</h2>
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <span class="step-number">1</span>
+                    <strong>User enters natural language question</strong>
+                    <br><code>QueryInput.jsx</code> captures input
+                </div>
+                <div class="flow-step">
+                    <span class="step-number">2</span>
+                    <strong>Frontend sends POST request</strong>
+                    <br><code>api.js → POST /api/query</code>
+                </div>
+                <div class="flow-step">
+                    <span class="step-number">3</span>
+                    <strong>Backend receives request</strong>
+                    <br><code>server.js → queryRoutes.js</code>
+                </div>
+                <div class="flow-step">
+                    <span class="step-number">4</span>
+                    <strong>Extract database schema</strong>
+                    <br><code>schemaExtractor.js → MySQL INFORMATION_SCHEMA</code>
+                </div>
+                <div class="flow-step">
+                    <span class="step-number">5</span>
+                    <strong>Generate SQL using Gemini AI</strong>
+                    <br><code>llmService.js → Gemini API (NLQ + Schema → SQL)</code>
+                </div>
+                <div class="flow-step">
+                    <span class="step-number">6</span>
+                    <strong>Validate & execute SQL</strong>
+                    <br><code>sqlService.js → MySQL database</code>
+                </div>
+                <div class="flow-step">
+                    <span class="step-number">7</span>
+                    <strong>Return results to frontend</strong>
+                    <br><code>ResultsTable.jsx</code> displays data
+                </div>
+            </div>
+        </div>
+
+        <!-- File Structure -->
+        <div class="section">
+            <h2>📁 Project File Structure</h2>
+            <div class="file-tree">
+<pre>
+<span class="folder">nlq-2-sql/</span>
+├── <span class="folder">backend/</span>
+│   ├── <span class="folder">api/</span>
+│   │   └── <span class="file">index.js</span>              <em># Vercel serverless entry point</em>
+│   ├── <span class="folder">config/</span>
+│   │   └── <span class="file">db.js</span>                 <em># MySQL connection pool</em>
+│   ├── <span class="folder">routes/</span>
+│   │   └── <span class="file">queryRoutes.js</span>        <em># API route handlers (/query, /schema)</em>
+│   ├── <span class="folder">services/</span>
+│   │   ├── <span class="file">llmService.js</span>         <em># Gemini AI integration</em>
+│   │   └── <span class="file">sqlService.js</span>         <em># SQL execution & retry logic</em>
+│   ├── <span class="folder">utils/</span>
+│   │   └── <span class="file">schemaExtractor.js</span>    <em># Extract DB schema</em>
+│   ├── <span class="file">server.js</span>                 <em># Express app configuration</em>
+│   ├── <span class="file">package.json</span>
+│   └── <span class="file">vercel.json</span>               <em># Vercel deployment config</em>
+│
+└── <span class="folder">frontend/</span>
+    ├── <span class="folder">src/</span>
+    │   ├── <span class="folder">components/</span>
+    │   │   ├── <span class="file">QueryInput.jsx</span>     <em># User input component</em>
+    │   │   ├── <span class="file">ResultsTable.jsx</span>   <em># Display query results</em>
+    │   │   └── <span class="file">Navbar.jsx</span>         <em># Navigation bar</em>
+    │   ├── <span class="folder">pages/</span>
+    │   │   ├── <span class="file">HomePage.jsx</span>       <em># Main query page</em>
+    │   │   ├── <span class="file">TablesPage.jsx</span>     <em># Database tables view</em>
+    │   │   └── <span class="file">DocsPage.jsx</span>       <em># Documentation page</em>
+    │   ├── <span class="folder">services/</span>
+    │   │   └── <span class="file">api.js</span>             <em># Axios API calls</em>
+    │   ├── <span class="file">App.jsx</span>                <em># Main app & routing</em>
+    │   ├── <span class="file">theme.js</span>               <em># Material-UI dark theme</em>
+    │   └── <span class="file">main.jsx</span>               <em># React entry point</em>
+    ├── <span class="file">package.json</span>
+    └── <span class="file">vercel.json</span>                <em># SPA routing config</em>
+</pre>
+            </div>
+        </div>
+
+        <!-- Backend Files -->
+        <div class="section">
+            <h2>⚙️ Backend Files Explained</h2>
+            
+            <h3>1. server.js</h3>
+            <p><strong>Purpose:</strong> Main Express application configuration</p>
+            <div class="code-block">
+// Sets up Express, CORS, routes
+// Exports app for Vercel serverless
+// Health check endpoint: /api/health
+            </div>
+            <table>
+                <tr>
+                    <th>Responsibility</th>
+                    <th>Details</th>
+                </tr>
+                <tr>
+                    <td>CORS Configuration</td>
+                    <td>Allows requests from frontend (nlq-frontend.vercel.app)</td>
+                </tr>
+                <tr>
+                    <td>Route Registration</td>
+                    <td>Maps /api/* to queryRoutes</td>
+                </tr>
+                <tr>
+                    <td>Error Handling</td>
+                    <td>Catches database connection errors</td>
+                </tr>
+            </table>
+
+            <h3>2. config/db.js</h3>
+            <p><strong>Purpose:</strong> MySQL connection pool management</p>
+            <div class="code-block">
+// Creates mysql2 connection pool
+// Handles both local (localhost) and production (Aiven)
+// SSL enabled for production only
+            </div>
+
+            <h3>3. routes/queryRoutes.js</h3>
+            <p><strong>Purpose:</strong> API endpoint definitions</p>
+            <table>
+                <tr>
+                    <th>Endpoint</th>
+                    <th>Method</th>
+                    <th>Function</th>
+                </tr>
+                <tr>
+                    <td>/api/query</td>
+                    <td>POST</td>
+                    <td>Execute natural language query</td>
+                </tr>
+                <tr>
+                    <td>/api/schema</td>
+                    <td>GET</td>
+                    <td>Get database schema</td>
+                </tr>
+                <tr>
+                    <td>/api/health</td>
+                    <td>GET</td>
+                    <td>Check database connection</td>
+                </tr>
+            </table>
+
+            <h3>4. services/llmService.js</h3>
+            <p><strong>Purpose:</strong> Gemini AI integration for NLQ → SQL conversion</p>
+            <div class="code-block">
+// Sends prompt: "Convert '{question}' to SQL for {schema}"
+// Cleans markdown formatting from response
+// Returns pure SQL query string
+            </div>
+
+            <h3>5. services/sqlService.js</h3>
+            <p><strong>Purpose:</strong> SQL execution with retry logic</p>
+            <div class="code-block">
+// 1. Generate SQL from NLQ
+// 2. Validate query (no DROP, DELETE, UPDATE)
+// 3. Execute on MySQL
+// 4. If fails: Retry with error context (self-correction)
+// 5. Return results or error
+            </div>
+
+            <h3>6. utils/schemaExtractor.js</h3>
+            <p><strong>Purpose:</strong> Extract database schema dynamically</p>
+            <div class="code-block">
+// Queries INFORMATION_SCHEMA.TABLES
+// DESCRIBE each table for columns
+// Returns formatted schema string for AI
+            </div>
+
+            <h3>7. api/index.js</h3>
+            <p><strong>Purpose:</strong> Vercel serverless function entry point</p>
+            <div class="code-block">
+// Imports Express app from server.js
+// Exports for Vercel's serverless environment
+// Handles all incoming requests
+            </div>
+        </div>
+
+        <!-- Frontend Files -->
+        <div class="section">
+            <h2>🎨 Frontend Files Explained</h2>
+            
+            <h3>1. App.jsx</h3>
+            <p><strong>Purpose:</strong> Main application component with routing</p>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Implementation</th>
+                </tr>
+                <tr>
+                    <td>React Router</td>
+                    <td>Routes: /, /tables, /docs</td>
+                </tr>
+                <tr>
+                    <td>Theme Provider</td>
+                    <td>Material-UI dark theme</td>
+                </tr>
+                <tr>
+                    <td>Health Check</td>
+                    <td>Tests backend connection on load</td>
+                </tr>
+            </table>
+
+            <h3>2. components/QueryInput.jsx</h3>
+            <p><strong>Purpose:</strong> User input interface with sample queries</p>
+            <div class="code-block">
+// TextField for natural language input
+// Sample query chips for quick testing
+// Sends question to api.js → /api/query
+            </div>
+
+            <h3>3. components/ResultsTable.jsx</h3>
+            <p><strong>Purpose:</strong> Display query results in formatted table</p>
+            <div class="code-block">
+// Shows generated SQL query
+// Renders data table with all columns
+// Error handling with retry option
+// Row count & attempt number display
+            </div>
+
+            <h3>4. pages/TablesPage.jsx</h3>
+            <p><strong>Purpose:</strong> View all database tables with caching</p>
+            <div class="code-block">
+// Tabs for 4 tables: Books, Members, Staff, Transactions
+// localStorage caching (5 min expiry)
+// Refresh button for manual update
+// Shows cache status & last updated time
+            </div>
+
+            <h3>5. services/api.js</h3>
+            <p><strong>Purpose:</strong> Axios HTTP client for API calls</p>
+            <table>
+                <tr>
+                    <th>Function</th>
+                    <th>API Call</th>
+                </tr>
+                <tr>
+                    <td>executeQuery(question)</td>
+                    <td>POST /api/query</td>
+                </tr>
+                <tr>
+                    <td>getSchema()</td>
+                    <td>GET /api/schema</td>
+                </tr>
+                <tr>
+                    <td>checkHealth()</td>
+                    <td>GET /api/health</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Database Schema -->
+        <div class="section">
+            <h2>🗄️ Database Schema</h2>
+            
+            <h3>Books Table</h3>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>book_id</td>
+                    <td>INT (PK)</td>
+                    <td>Unique book identifier</td>
+                </tr>
+                <tr>
+                    <td>title</td>
+                    <td>VARCHAR(255)</td>
+                    <td>Book title</td>
+                </tr>
+                <tr>
+                    <td>author</td>
+                    <td>VARCHAR(255)</td>
+                    <td>Author name</td>
+                </tr>
+                <tr>
+                    <td>isbn</td>
+                    <td>VARCHAR(13)</td>
+                    <td>ISBN code (unique)</td>
+                </tr>
+                <tr>
+                    <td>category</td>
+                    <td>VARCHAR(100)</td>
+                    <td>Fiction, Technology, etc.</td>
+                </tr>
+                <tr>
+                    <td>available_copies</td>
+                    <td>INT</td>
+                    <td>Currently available</td>
+                </tr>
+                <tr>
+                    <td>status</td>
+                    <td>ENUM</td>
+                    <td>available | unavailable | reserved</td>
+                </tr>
+            </table>
+
+            <h3>Members Table</h3>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>member_id</td>
+                    <td>INT (PK)</td>
+                    <td>Unique member identifier</td>
+                </tr>
+                <tr>
+                    <td>name</td>
+                    <td>VARCHAR(255)</td>
+                    <td>Member's full name</td>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <td>VARCHAR(255)</td>
+                    <td>Email address (unique)</td>
+                </tr>
+                <tr>
+                    <td>membership_type</td>
+                    <td>ENUM</td>
+                    <td>student | faculty | public</td>
+                </tr>
+                <tr>
+                    <td>join_date</td>
+                    <td>DATE</td>
+                    <td>Membership start date</td>
+                </tr>
+            </table>
+
+            <h3>Staff Table</h3>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>staff_id</td>
+                    <td>INT (PK)</td>
+                    <td>Unique staff identifier</td>
+                </tr>
+                <tr>
+                    <td>name</td>
+                    <td>VARCHAR(255)</td>
+                    <td>Staff member name</td>
+                </tr>
+                <tr>
+                    <td>position</td>
+                    <td>VARCHAR(100)</td>
+                    <td>Librarian, Assistant, etc.</td>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <td>VARCHAR(255)</td>
+                    <td>Email address (unique)</td>
+                </tr>
+                <tr>
+                    <td>salary</td>
+                    <td>DECIMAL(10,2)</td>
+                    <td>Monthly salary</td>
+                </tr>
+            </table>
+
+            <h3>Transactions Table (Relationships)</h3>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Foreign Key</th>
+                </tr>
+                <tr>
+                    <td>transaction_id</td>
+                    <td>INT (PK)</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>book_id</td>
+                    <td>INT (FK)</td>
+                    <td>→ books.book_id</td>
+                </tr>
+                <tr>
+                    <td>member_id</td>
+                    <td>INT (FK)</td>
+                    <td>→ members.member_id</td>
+                </tr>
+                <tr>
+                    <td>status</td>
+                    <td>ENUM</td>
+                    <td>issued | returned | overdue</td>
+                </tr>
+                <tr>
+                    <td>fine_amount</td>
+                    <td>DECIMAL(10,2)</td>
+                    <td>Late fee</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="section">
+            <h2>🛠️ Technology Stack</h2>
+            <div class="tech-stack">
+                <div class="tech-card">
+                    <div class="tech-icon">⚛️</div>
+                    <h3>React 18</h3>
+                    <p>Frontend UI library with hooks</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">🎨</div>
+                    <h3>Material-UI</h3>
+                    <p>Component library & theming</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">🟢</div>
+                    <h3>Node.js + Express</h3>
+                    <p>Backend REST API</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">🐬</div>
+                    <h3>MySQL</h3>
+                    <p>Relational database (Aiven)</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">🤖</div>
+                    <h3>Gemini Flash 2.0</h3>
+                    <p>AI for NLQ → SQL</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">▲</div>
+                    <h3>Vercel</h3>
+                    <p>Serverless deployment</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Environment Variables -->
+        <div class="section">
+            <h2>🔐 Environment Variables</h2>
+            
+            <h3>Backend (.env)</h3>
+            <div class="code-block">
+DB_HOST=your-aiven-host.aivencloud.com
+DB_USER=avnadmin
+DB_PASSWORD=your_password
+DB_NAME=defaultdb
+DB_PORT=3306
+GEMINI_API_KEY=your_gemini_key
+NODE_ENV=production
+            </div>
+
+            <h3>Frontend (.env.production)</h3>
+            <div class="code-block">
+VITE_API_URL=https://nlq-2-sql.vercel.app/api
+            </div>
+        </div>
+
+        <!-- Deployment -->
+        <div class="section">
+            <h2>🚀 Deployment Architecture</h2>
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Platform</th>
+                    <th>URL</th>
+                </tr>
+                <tr>
+                    <td>Frontend</td>
+                    <td>Vercel (Static)</td>
+                    <td>nlq-frontend.vercel.app</td>
+                </tr>
+                <tr>
+                    <td>Backend API</td>
+                    <td>Vercel (Serverless)</td>
+                    <td>nlq-2-sql.vercel.app/api</td>
+                </tr>
+                <tr>
+                    <td>MySQL Database</td>
+                    <td>Aiven (Cloud)</td>
+                    <td>*.aivencloud.com:3306</td>
+                </tr>
+                <tr>
+                    <td>AI Model</td>
+                    <td>Google Cloud</td>
+                    <td>Gemini API</td>
+                </tr>
+            </table>
+        </div>
+
+        <footer style="text-align: center; padding: 30px; color: white;">
+            <p>📘 NLQ-to-SQL Library System Documentation</p>
+            <p>Built with React, Express, MySQL & Gemini AI • October 2025</p>
+        </footer>
+    </div>
+</body>
+</html>
