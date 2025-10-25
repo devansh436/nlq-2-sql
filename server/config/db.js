@@ -11,9 +11,9 @@ const pool = process.env.DATABASE_URL
       port: process.env.DB_PORT || 3306,
       waitForConnections: true,
       connectionLimit: 10,
-      ssl: {
-        rejectUnauthorized: true,
-      },
+      ssl: process.env.NODE_ENV === 'production' ? {
+        rejectUnauthorized: true
+      } : false
     });
 
 module.exports = pool;

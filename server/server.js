@@ -11,6 +11,7 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:5000',
+    'http://localhost:5173',
     'https://nlq-frontend.vercel.app',
     'https://*.vercel.app'
   ],
@@ -34,6 +35,9 @@ app.get('/', (req, res) => {
   });
 });
 
+app.get('/health', (req, res) => {
+  res.json({msg : "server is running!!"});
+})
 
 // Routes
 app.use("/api", queryRoutes);
