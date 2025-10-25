@@ -11,35 +11,41 @@ const app = express();
 // Connect to MongoDB for authentication
 connectMongoDB();
 
-// Middleware - CORS must be first
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
+// Middleware - Manual CORS setup for Vercel
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    "http://localhost:3000",
+    "http://localhost:5000",
+    "http://localhost:5173",
+    "https://nlq-2-sql-fronted.vercel.app",
+  ];
 
-      const allowedOrigins = [
-        "http://localhost:3000",
-        "http://localhost:5000",
-        "http://localhost:5173",
-        "https://nlq-2-sql-fronted.vercel.app",
-      ];
+  // Allow any vercel.app domain or localhost
+  if (
+    !origin ||
+    origin.endsWith(".vercel.app") ||
+    allowedOrigins.includes(origin)
+  ) {
+    res.setHeader("Access-Control-Allow-Origin", origin || "*");
+  } else {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
 
-      // Allow any vercel.app subdomain
-      if (origin.endsWith(".vercel.app") || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, true); // Allow all in production for now
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
 
-// Handle preflight requests
-app.options("*", cors());
+  // Handle preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  next();
+});
 
 app.use(express.json());
 
