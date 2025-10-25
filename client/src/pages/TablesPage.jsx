@@ -24,7 +24,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import CachedIcon from '@mui/icons-material/Cached';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const CACHE_KEY = 'library_tables_cache';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
