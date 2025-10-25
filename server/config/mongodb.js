@@ -6,13 +6,17 @@ const connectMongoDB = async () => {
     const mongoURI =
       process.env.MONGODB_URI || "mongodb://localhost:27017/nlq_auth";
 
-    await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-      socketTimeoutMS: 45000,
-    });
-
-    // Disable buffering - fail fast if not connected
+    // Disable buffering BEFORE connecting - fail fast if not connected
     mongoose.set("bufferCommands", false);
+    mongoose.set("bufferTimeoutMS", 5000);
+
+    await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      family: 4, // Use IPv4, skip trying IPv6
+      maxPoolSize: 10,
+      minPoolSize: 1,
+    });
 
     console.log("✅ MongoDB connected successfully");
   } catch (error) {
