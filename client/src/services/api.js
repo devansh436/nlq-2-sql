@@ -10,7 +10,7 @@ const getAuthHeader = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-// Authentication APIs
+// Authentication APIs for login, registration, and fetching user info
 export const login = async (email, password) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/login`, {
