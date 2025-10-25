@@ -37,12 +37,7 @@ function TabPanel({ children, value, index }) {
 
 function TablesPage() {
   const [tabValue, setTabValue] = useState(0);
-  const [tables, setTables] = useState({
-    books: [],
-    members: [],
-    staff: [],
-    transactions: [],
-  });
+  const [tables, setTables] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastFetched, setLastFetched] = useState(null);
