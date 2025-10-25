@@ -5,21 +5,71 @@ import {
   Button,
   Box,
   Container,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import HomeIcon from "@mui/icons-material/Home";
 import StorageIcon from "@mui/icons-material/Storage";
 import DescriptionIcon from "@mui/icons-material/Description";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
   const location = useLocation();
+  const { user, isAuthenticated, logout } = useAuth();
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    handleMenuClose();
+  };
 
   const navItems = [
     { path: "/", label: "Home", icon: <HomeIcon /> },
     { path: "/tables", label: "Tables", icon: <StorageIcon /> },
     { path: "/docs", label: "Docs", icon: <DescriptionIcon /> },
   ];
+
+  const getRoleColor = (role) => {
+    switch (role) {
+      case "ADMIN":
+        return "error";
+      case "STAFF":
+        return "warning";
+      case "USER":
+        return "success";
+      default:
+        return "default";
+    }
+  };
+
+  const getRoleIcon = (role) => {
+    switch (role) {
+      case "ADMIN":
+        return "🧑‍💻";
+      case "STAFF":
+        return "🧑‍💼";
+      case "USER":
+        return "👤";
+      default:
+        return "👤";
+    }
+  };
 
   return (
     <AppBar
@@ -53,7 +103,7 @@ function Navbar() {
             </Typography>
           </Box>
 
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
             {navItems.map((item) => (
               <Button
                 key={item.path}
@@ -79,6 +129,49 @@ function Navbar() {
                 {item.label}
               </Button>
             ))}
+
+            {isAuthenticated ? (
+              <>
+                <Chip
+                  label={`${getRoleIcon(user?.role)} ${user?.role}`}
+                  color={getRoleColor(user?.role)}
+                  size="small"
+                  sx={{ ml: 2 }}
+                />
+                <IconButton
+                  onClick={handleMenuOpen}
+                  sx={{ color: "primary.main" }}
+                >
+                  <AccountCircleIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                >
+                  <MenuItem disabled>
+                    <Typography variant="body2">
+                      {user?.username} ({user?.email})
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <LogoutIcon fontSize="small" sx={{ mr: 1 }} />
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Button
+                component={Link}
+                to="/login"
+                startIcon={<LoginIcon />}
+                variant="contained"
+                size="small"
+                sx={{ ml: 2 }}
+              >
+                Login
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </Container>

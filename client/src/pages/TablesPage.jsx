@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -17,15 +17,14 @@ import {
   Chip,
   Fade,
   Button,
-  Tooltip
-} from '@mui/material';
-import StorageIcon from '@mui/icons-material/Storage';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import CachedIcon from '@mui/icons-material/Cached';
-import axios from 'axios';
+  Tooltip,
+} from "@mui/material";
+import StorageIcon from "@mui/icons-material/Storage";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import CachedIcon from "@mui/icons-material/Cached";
+import { executeQuery } from "../services/api";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const CACHE_KEY = 'library_tables_cache';
+const CACHE_KEY = "library_tables_cache";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 function TabPanel({ children, value, index }) {
@@ -42,7 +41,7 @@ function TablesPage() {
     books: [],
     members: [],
     staff: [],
-    transactions: []
+    transactions: [],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -87,7 +86,7 @@ function TablesPage() {
       localStorage.removeItem(CACHE_KEY);
       return null;
     } catch (error) {
-      console.error('Cache read error:', error);
+      console.error("Cache read error:", error);
       return null;
     }
   };
@@ -96,11 +95,11 @@ function TablesPage() {
     try {
       const cacheData = {
         data,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
       localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
     } catch (error) {
-      console.error('Cache write error:', error);
+      console.error("Cache write error:", error);
     }
   };
 
@@ -111,15 +110,21 @@ function TablesPage() {
       setIsCached(false);
 
       const queries = {
-        books: 'SELECT * FROM books LIMIT 50',
-        members: 'SELECT * FROM members',
-        staff: 'SELECT * FROM staff',
-        transactions: 'SELECT * FROM transactions LIMIT 100'
+        books: "SELECT * FROM books LIMIT 50",
+        members: "SELECT * FROM members",
+        staff: "SELECT * FROM staff",
+        transactions: "SELECT * FROM transactions LIMIT 100",
       };
 
       const promises = Object.entries(queries).map(async ([table, query]) => {
-        const response = await axios.post(`${API_BASE_URL}/query`, { question: query });
-        return { table, data: response.data.results || [] };
+        try {
+          const response = await executeQuery(query);
+          return { table, data: response.results || [] };
+        } catch (err) {
+          // If unauthorized or error, return empty array
+          console.error(`Error fetching ${table}:`, err);
+          return { table, data: [] };
+        }
       });
 
       const results = await Promise.all(promises);
@@ -132,7 +137,7 @@ function TablesPage() {
       setLastFetched(new Date());
       saveToCache(newTables);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to load tables");
     } finally {
       setLoading(false);
     }
@@ -143,7 +148,7 @@ function TablesPage() {
   };
 
   const formatLastFetched = () => {
-    if (!lastFetched) return '';
+    if (!lastFetched) return "";
     const now = new Date();
     const diff = Math.floor((now - lastFetched) / 1000); // seconds
 
@@ -153,18 +158,31 @@ function TablesPage() {
   };
 
   const tableConfig = [
-    { name: 'books', label: 'Books', icon: '📚', color: '#60a5fa' },
-    { name: 'members', label: 'Members', icon: '👤', color: '#34d399' },
-    { name: 'staff', label: 'Staff', icon: '👨‍💼', color: '#a78bfa' },
-    { name: 'transactions', label: 'Transactions', icon: '📝', color: '#fbbf24' }
-  ];
+    { name: "books", label: "Books", icon: "📚", color: "#60a5fa" },
+    { name: "members", label: "Members", icon: "👤", color: "#34d399" },
+    { name: "staff", label: "Staff", icon: "👨‍💼", color: "#a78bfa" },
+    {
+      name: "transactions",
+      label: "Transactions",
+      icon: "📝",
+      color: "#fbbf24",
+    },
+  ].filter((table) => tables[table.name] && tables[table.name].length > 0); // Only show tables with data
 
   if (loading && !isCached) {
     return (
       <Container maxWidth="xl" sx={{ py: 8 }}>
-        <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" gap={2}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
+          gap={2}
+        >
           <CircularProgress size={60} />
-          <Typography variant="h6" color="text.secondary">Loading database tables...</Typography>
+          <Typography variant="h6" color="text.secondary">
+            Loading database tables...
+          </Typography>
         </Box>
       </Container>
     );
@@ -173,7 +191,7 @@ function TablesPage() {
   if (error) {
     return (
       <Container maxWidth="xl" sx={{ py: 4 }}>
-        <Alert 
+        <Alert
           severity="error"
           action={
             <Button color="inherit" size="small" onClick={handleRefresh}>
@@ -187,22 +205,53 @@ function TablesPage() {
     );
   }
 
+  // Check if user has no accessible tables
+  if (tableConfig.length === 0) {
+    return (
+      <Container maxWidth="xl" sx={{ py: 4 }}>
+        <Alert severity="info">
+          You don't have access to any tables with your current role. Contact an
+          administrator to grant you table access permissions.
+        </Alert>
+      </Container>
+    );
+  }
+
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Fade in timeout={600}>
         <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <StorageIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mb: 4,
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <StorageIcon sx={{ fontSize: 40, color: "primary.main" }} />
               <Box>
                 <Typography variant="h4" fontWeight={700}>
                   Database Tables
                 </Typography>
                 {lastFetched && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                    {isCached && <CachedIcon sx={{ fontSize: 16, color: 'success.main' }} />}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      mt: 0.5,
+                    }}
+                  >
+                    {isCached && (
+                      <CachedIcon
+                        sx={{ fontSize: 16, color: "success.main" }}
+                      />
+                    )}
                     <Typography variant="caption" color="text.secondary">
-                      {isCached ? 'Cached data' : 'Fresh data'} • Updated {formatLastFetched()}
+                      {isCached ? "Cached data" : "Fresh data"} • Updated{" "}
+                      {formatLastFetched()}
                     </Typography>
                   </Box>
                 )}
@@ -222,35 +271,43 @@ function TablesPage() {
             </Tooltip>
           </Box>
 
-          <Paper elevation={3} sx={{ borderRadius: 3, overflow: 'hidden' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
-              <Tabs 
-                value={tabValue} 
+          <Paper elevation={3} sx={{ borderRadius: 3, overflow: "hidden" }}>
+            <Box
+              sx={{
+                borderBottom: 1,
+                borderColor: "divider",
+                bgcolor: "background.paper",
+              }}
+            >
+              <Tabs
+                value={tabValue}
                 onChange={(e, newValue) => setTabValue(newValue)}
                 variant="fullWidth"
                 sx={{
-                  '& .MuiTab-root': {
+                  "& .MuiTab-root": {
                     fontWeight: 600,
-                    fontSize: '1rem',
-                    py: 2
-                  }
+                    fontSize: "1rem",
+                    py: 2,
+                  },
                 }}
               >
                 {tableConfig.map((table, index) => (
-                  <Tab 
+                  <Tab
                     key={table.name}
                     label={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
                         <span>{table.icon}</span>
                         <span>{table.label}</span>
-                        <Chip 
-                          label={tables[table.name].length} 
+                        <Chip
+                          label={tables[table.name].length}
                           size="small"
-                          sx={{ 
+                          sx={{
                             bgcolor: table.color,
-                            color: '#000',
+                            color: "#000",
                             fontWeight: 700,
-                            fontSize: '0.75rem'
+                            fontSize: "0.75rem",
                           }}
                         />
                       </Box>
@@ -266,38 +323,44 @@ function TablesPage() {
                   <Table stickyHeader>
                     <TableHead>
                       <TableRow>
-                        {tables[table.name][0] && Object.keys(tables[table.name][0]).map((column) => (
-                          <TableCell 
-                            key={column}
-                            sx={{ 
-                              fontWeight: 700,
-                              bgcolor: 'background.default',
-                              color: 'primary.main',
-                              textTransform: 'uppercase',
-                              fontSize: '0.85rem',
-                              letterSpacing: '0.05em'
-                            }}
-                          >
-                            {column}
-                          </TableCell>
-                        ))}
+                        {tables[table.name][0] &&
+                          Object.keys(tables[table.name][0]).map((column) => (
+                            <TableCell
+                              key={column}
+                              sx={{
+                                fontWeight: 700,
+                                bgcolor: "background.default",
+                                color: "primary.main",
+                                textTransform: "uppercase",
+                                fontSize: "0.85rem",
+                                letterSpacing: "0.05em",
+                              }}
+                            >
+                              {column}
+                            </TableCell>
+                          ))}
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {tables[table.name].map((row, rowIndex) => (
-                        <TableRow 
+                        <TableRow
                           key={rowIndex}
                           hover
                           sx={{
-                            '&:hover': {
-                              bgcolor: 'rgba(96, 165, 250, 0.05)'
-                            }
+                            "&:hover": {
+                              bgcolor: "rgba(96, 165, 250, 0.05)",
+                            },
                           }}
                         >
                           {Object.values(row).map((value, cellIndex) => (
                             <TableCell key={cellIndex}>
                               {value === null ? (
-                                <Chip label="NULL" size="small" variant="outlined" sx={{ opacity: 0.5 }} />
+                                <Chip
+                                  label="NULL"
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{ opacity: 0.5 }}
+                                />
                               ) : (
                                 value.toString()
                               )}
