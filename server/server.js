@@ -8,8 +8,16 @@ require("dotenv").config();
 
 const app = express();
 
-// Connect to MongoDB for authentication
-connectMongoDB();
+// Connect to MongoDB for authentication (don't await here, let it connect in background)
+let mongoConnected = false;
+connectMongoDB()
+  .then(() => {
+    mongoConnected = true;
+    console.log("✅ MongoDB ready for authentication");
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection failed:", err.message);
+  });
 
 // Middleware - Manual CORS setup for Vercel
 app.use((req, res, next) => {

@@ -6,7 +6,13 @@ const connectMongoDB = async () => {
     const mongoURI =
       process.env.MONGODB_URI || "mongodb://localhost:27017/nlq_auth";
 
-    await mongoose.connect(mongoURI);
+    await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000,
+    });
+
+    // Disable buffering - fail fast if not connected
+    mongoose.set("bufferCommands", false);
 
     console.log("✅ MongoDB connected successfully");
   } catch (error) {
@@ -24,6 +30,7 @@ const connectMongoDB = async () => {
 
     // Don't exit process, just warn
     console.log("⚠️  Server starting without MongoDB (auth features disabled)");
+    throw error; // Re-throw to let caller handle it
   }
 };
 
