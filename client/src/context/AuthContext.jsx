@@ -42,6 +42,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      // Clear table cache before login
+      localStorage.removeItem("library_tables_cache");
+
       const response = await apiLogin(email, password);
       setToken(response.token);
       setUser(response.user);
@@ -74,6 +77,8 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken(null);
     localStorage.removeItem("token");
+    // Clear table cache on logout
+    localStorage.removeItem("library_tables_cache");
   };
 
   const value = {

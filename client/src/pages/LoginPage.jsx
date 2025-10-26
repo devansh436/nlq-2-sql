@@ -25,6 +25,9 @@ function LoginPage() {
     setError("");
     setLoading(true);
 
+    // Clear table cache on login
+    localStorage.removeItem("library_tables_cache");
+
     const result = await login(email, password);
 
     if (result.success) {
