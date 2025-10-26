@@ -106,7 +106,7 @@ function TablesPage() {
 
       // Use the new role-based tables API instead of executing queries via LLM
       const response = await getTables();
-      
+
       if (response.success) {
         setTables(response.tables);
         setLastFetched(new Date());
@@ -145,7 +145,12 @@ function TablesPage() {
       icon: "📝",
       color: "#fbbf24",
     },
-  ].filter((table) => tables[table.name] && tables[table.name] !== null && tables[table.name].length > 0); // Only show tables with data (not null or empty)
+  ].filter(
+    (table) =>
+      tables[table.name] &&
+      tables[table.name] !== null &&
+      tables[table.name].length > 0
+  ); // Only show tables with data (not null or empty)
 
   if (loading && !isCached) {
     return (

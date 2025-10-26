@@ -80,9 +80,9 @@ router.get("/tables", authenticate, async (req, res) => {
     const permissions = getRolePermissions(userRole);
 
     if (!permissions) {
-      return res.status(403).json({ 
+      return res.status(403).json({
         error: "Invalid role",
-        tables: {} 
+        tables: {},
       });
     }
 
@@ -95,15 +95,18 @@ router.get("/tables", authenticate, async (req, res) => {
       try {
         // Determine appropriate limit based on table
         let limit = 50;
-        if (tableName === 'transactions') {
+        if (tableName === "transactions") {
           limit = 100;
-        } else if (tableName === 'members' || tableName === 'staff') {
+        } else if (tableName === "members" || tableName === "staff") {
           limit = 1000; // No limit for smaller tables
         }
 
         const query = `SELECT * FROM ${tableName} LIMIT ${limit}`;
-        console.log(`Fetching table '${tableName}' for role '${userRole}':`, query);
-        
+        console.log(
+          `Fetching table '${tableName}' for role '${userRole}':`,
+          query
+        );
+
         const [results] = await pool.query(query);
         tables[tableName] = results;
       } catch (error) {
