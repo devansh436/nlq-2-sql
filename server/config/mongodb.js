@@ -6,10 +6,6 @@ const connectMongoDB = async () => {
     const mongoURI =
       process.env.MONGODB_URI || "mongodb://localhost:27017/nlq_auth";
 
-    // Disable buffering BEFORE connecting - fail fast if not connected
-    mongoose.set("bufferCommands", false);
-    mongoose.set("bufferTimeoutMS", 5000);
-
     await mongoose.connect(mongoURI, {
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
@@ -17,6 +13,10 @@ const connectMongoDB = async () => {
       maxPoolSize: 10,
       minPoolSize: 1,
     });
+
+    // Set bufferCommands AFTER successful connection
+    mongoose.set("bufferCommands", false);
+    mongoose.set("bufferTimeoutMS", 5000);
 
     console.log("✅ MongoDB connected successfully");
   } catch (error) {

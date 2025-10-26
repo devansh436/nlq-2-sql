@@ -8,17 +8,6 @@ require("dotenv").config();
 
 const app = express();
 
-// Connect to MongoDB for authentication (don't await here, let it connect in background)
-let mongoConnected = false;
-connectMongoDB()
-  .then(() => {
-    mongoConnected = true;
-    console.log("✅ MongoDB ready for authentication");
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection failed:", err.message);
-  });
-
 // Middleware - Manual CORS setup for Vercel
 app.use((req, res, next) => {
   const origin = req.headers.origin;
@@ -126,16 +115,43 @@ app.get("/api/health", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-// Only listen locally, not on Vercel
-if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+
+// Initialize server with MongoDB connection
+const startServer = async () => {
+  try {
+    // Wait for MongoDB connection before starting server
+    await connectMongoDB();
+    console.log("✅ MongoDB ready for authentication");
+
+    // Only listen locally, not on Vercel
+    if (process.env.NODE_ENV !== "production") {
+      app.listen(PORT, () => {
+        console.log(`🚀 Server running on http://localhost:${PORT}`);
+        console.log(
+          `⚕️ Check server health on http://localhost:${PORT}/api/health`
+        );
+        console.log(`🔐 Authentication enabled with MongoDB`);
+        console.log(`📊 Role-based access control active`);
+      });
+    }
+  } catch (error) {
+    console.error("❌ Failed to start server:", error.message);
     console.log(
-      `⚕️ Check server health on http://localhost:${PORT}/api/health`
+      "⚠️ Server starting without MongoDB (auth features may not work)"
     );
-    console.log(`🔐 Authentication enabled with MongoDB`);
-    console.log(`📊 Role-based access control active`);
-  });
-}
+
+    // Start server anyway for development
+    if (process.env.NODE_ENV !== "production") {
+      app.listen(PORT, () => {
+        console.log(
+          `🚀 Server running on http://localhost:${PORT} (MongoDB disconnected)`
+        );
+      });
+    }
+  }
+};
+
+// Start the server
+startServer();
 
 module.exports = app;
