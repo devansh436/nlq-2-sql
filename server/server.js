@@ -1,10 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 const pool = require("./config/db");
+const connectMongoDB = require("./config/mongodb"); // NEW
 const queryRoutes = require("./routes/queryRoutes");
+const authRoutes = require("./routes/authRoutes"); // NEW
 require("dotenv").config();
 
 const app = express();
+
+// Connect MongoDB (optional, won't break if missing)
+connectMongoDB(); // NEW
 
 // Middleware
 app.use(cors({
@@ -24,13 +29,14 @@ app.use(express.json());
 
 // Root route
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'Library NLQ Backend API',
     status: 'running',
     endpoints: {
       health: '/api/health',
       query: '/api/query',
-      schema: '/api/schema'
+      schema: '/api/schema',
+      auth: '/api/auth/login' // NEW
     }
   });
 });
@@ -40,7 +46,8 @@ app.get('/health', (req, res) => {
 })
 
 // Routes
-app.use("/api", queryRoutes);
+app.use("/api/auth", authRoutes); // NEW - Auth routes
+app.use("/api", queryRoutes); // Existing routes
 
 // Test database connection
 app.get("/api/health", async (req, res) => {
@@ -60,6 +67,7 @@ app.get("/api/health", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+
 // Only listen locally, not on Vercel
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
