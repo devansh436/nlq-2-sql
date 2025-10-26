@@ -100,12 +100,6 @@
 
 ---
 
-## 🧩 License
-
-MIT (add your license if needed)
-
----
-
 
 
 
