@@ -59,6 +59,18 @@ export const getUserPermissions = async () => {
   }
 };
 
+// Get tables based on user role (no LLM API)
+export const getTables = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/tables`, {
+      headers: getAuthHeader(),
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { error: "Failed to fetch tables" };
+  }
+};
+
 // Query APIs (require authentication)
 export const executeQuery = async (question) => {
   try {

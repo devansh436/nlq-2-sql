@@ -73,4 +73,56 @@ router.get("/permissions", authenticate, async (req, res) => {
   }
 });
 
+// Get tables based on user role (no LLM API)
+router.get("/tables", authenticate, async (req, res) => {
+  try {
+    const userRole = req.userRole;
+    const permissions = getRolePermissions(userRole);
+
+    if (!permissions) {
+      return res.status(403).json({ 
+        error: "Invalid role",
+        tables: {} 
+      });
+    }
+
+    const pool = require("../config/db");
+    const allowedTables = permissions.allowedTables;
+    const tables = {};
+
+    // Generate and execute queries for each allowed table
+    for (const tableName of allowedTables) {
+      try {
+        // Determine appropriate limit based on table
+        let limit = 50;
+        if (tableName === 'transactions') {
+          limit = 100;
+        } else if (tableName === 'members' || tableName === 'staff') {
+          limit = 1000; // No limit for smaller tables
+        }
+
+        const query = `SELECT * FROM ${tableName} LIMIT ${limit}`;
+        console.log(`Fetching table '${tableName}' for role '${userRole}':`, query);
+        
+        const [results] = await pool.query(query);
+        tables[tableName] = results;
+      } catch (error) {
+        console.error(`Error fetching table '${tableName}':`, error.message);
+        // If table doesn't exist or query fails, keep it null (don't add to tables object)
+        tables[tableName] = null;
+      }
+    }
+
+    res.json({
+      success: true,
+      role: userRole,
+      tables,
+      permissions,
+    });
+  } catch (error) {
+    console.error("Tables fetch error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

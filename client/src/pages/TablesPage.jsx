@@ -22,7 +22,7 @@ import {
 import StorageIcon from "@mui/icons-material/Storage";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CachedIcon from "@mui/icons-material/Cached";
-import { executeQuery } from "../services/api";
+import { getTables } from "../services/api";
 
 const CACHE_KEY = "library_tables_cache";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -104,33 +104,16 @@ function TablesPage() {
       setError(null);
       setIsCached(false);
 
-      const queries = {
-        books: "SELECT * FROM books LIMIT 50",
-        members: "SELECT * FROM members",
-        staff: "SELECT * FROM staff",
-        transactions: "SELECT * FROM transactions LIMIT 100",
-      };
-
-      const promises = Object.entries(queries).map(async ([table, query]) => {
-        try {
-          const response = await executeQuery(query);
-          return { table, data: response.results || [] };
-        } catch (err) {
-          // If unauthorized or error, return empty array
-          console.error(`Error fetching ${table}:`, err);
-          return { table, data: [] };
-        }
-      });
-
-      const results = await Promise.all(promises);
-      const newTables = {};
-      results.forEach(({ table, data }) => {
-        newTables[table] = data;
-      });
-
-      setTables(newTables);
-      setLastFetched(new Date());
-      saveToCache(newTables);
+      // Use the new role-based tables API instead of executing queries via LLM
+      const response = await getTables();
+      
+      if (response.success) {
+        setTables(response.tables);
+        setLastFetched(new Date());
+        saveToCache(response.tables);
+      } else {
+        throw new Error(response.error || "Failed to load tables");
+      }
     } catch (err) {
       setError(err.message || "Failed to load tables");
     } finally {
@@ -162,7 +145,7 @@ function TablesPage() {
       icon: "📝",
       color: "#fbbf24",
     },
-  ].filter((table) => tables[table.name] && tables[table.name].length > 0); // Only show tables with data
+  ].filter((table) => tables[table.name] && tables[table.name] !== null && tables[table.name].length > 0); // Only show tables with data (not null or empty)
 
   if (loading && !isCached) {
     return (
