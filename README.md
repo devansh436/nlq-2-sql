@@ -99,6 +99,20 @@
 <img width="1470" height="796" alt="Screenshot 2025-10-26 at 5 48 02 PM" src="https://github.com/user-attachments/assets/d05d393a-11cb-4190-8908-204142507f2f" />
 
 ---
+---
+
+## 👥 Team Members
+
+| Name | Roll Number |
+|------|--------------|
+| Aadit Pithava | 23BCE001 |
+| Deshpande Devansh | 23BCE056 |
+| Jhaveri Shivam | 23BCE120 |
+| Jeel Dhamsaniya | 23BCE116 |
+| Nikhil Solanki | 23BCE198 |
+
+
+---
 
 
 
