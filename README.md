@@ -69,7 +69,9 @@
 - "Which technology books are currently available?"
 - "List all students who have borrowed fiction books"
 - "How many books has each faculty member borrowed?"
-
+- "What all books are borrowed by a particular Student?"
+- "Which book was issued by a particular staff?"
+  
 ---
 
 ## ⚙️ Tech Stack
