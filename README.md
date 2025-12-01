@@ -56,7 +56,7 @@
 
 ---
 
-## 🤖 How It Works
+## 🤖 Work Flow
 
 - User enters a question (e.g., "Which members have overdue books?")
 - Frontend sends NLQ via API to backend
@@ -95,27 +95,14 @@
 ## 📷 Screenshots
 <img width="1465" height="801" alt="Screenshot 2025-10-26 at 5 42 52 PM" src="https://github.com/user-attachments/assets/b83530c5-e3fe-48a2-a31a-b51511b944ce" />
 
+
 <img width="1461" height="786" alt="Screenshot 2025-10-26 at 5 44 58 PM" src="https://github.com/user-attachments/assets/3a39861f-3de8-42ef-823f-19dd1924c4b1" />
+
 
 <img width="1470" height="795" alt="Screenshot 2025-10-26 at 5 45 52 PM" src="https://github.com/user-attachments/assets/180cfe55-befd-42cd-977c-bad4690a69e8" />
 
+
 <img width="1470" height="796" alt="Screenshot 2025-10-26 at 5 48 02 PM" src="https://github.com/user-attachments/assets/d05d393a-11cb-4190-8908-204142507f2f" />
-
----
----
-
-## 👥 Team Members
-
-| Name | Roll Number |
-|------|--------------|
-| Aadit Pithava | 23BCE001 |
-| Deshpande Devansh | 23BCE056 |
-| Jhaveri Shivam | 23BCE120 |
-| Jeel Dhamsaniya | 23BCE116 |
-| Nikhil Solanki | 23BCE198 |
-
-
----
 
 
 
