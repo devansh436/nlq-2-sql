@@ -18,19 +18,7 @@
 
 ## 🗄️ Directory Structure
 
-/
-├── backend/ # Node.js/Express server, API, Gemini integration
-│ ├── config/
-│ ├── routes/
-│ ├── services/
-│ ├── utils/
-│ ├── api/index.js
-│ ├── server.js
-│ └── vercel.json
-├── frontend/ # React Material-UI frontend
-│ ├── src/
-│ ├── public/
-│ └── package.json
+<pre> ```plaintext / ├── backend/ # Node.js/Express server, API, Gemini integration │ ├── config/ │ ├── routes/ │ ├── services/ │ ├── utils/ │ ├── api/index.js │ ├── server.js │ └── vercel.json ├── frontend/ # React Material-UI frontend │ ├── src/ │ ├── public/ │ └── package.json ``` </pre>
 
 
 
