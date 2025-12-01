@@ -22,6 +22,7 @@ import RegisterPage from "./pages/RegisterPage";
 import { checkHealth } from "./services/api";
 import darkTheme from "./theme";
 import "./App.css";
+import AdminPanel from './pages/AdminPanel';
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
@@ -101,6 +102,8 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
+
       </Routes>
 
       <Box

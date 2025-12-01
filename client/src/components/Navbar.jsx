@@ -20,6 +20,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../context/AuthContext";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 function Navbar() {
   const location = useLocation();
@@ -44,6 +45,14 @@ function Navbar() {
     { path: "/tables", label: "Tables", icon: <StorageIcon /> },
     { path: "/docs", label: "Docs", icon: <DescriptionIcon /> },
   ];
+  // If admin, add admin item (ensure no duplicate path!)
+  if (user?.role === "ADMIN" && !navItems.some((item) => item.path === "/admin")) {
+    navItems.push({
+      path: "/admin",
+      label: "Admin",
+      icon: <AdminPanelSettingsIcon />,
+    });
+  }
 
   const getRoleColor = (role) => {
     switch (role) {

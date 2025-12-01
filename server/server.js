@@ -5,6 +5,7 @@ const connectMongoDB = require("./config/mongodb");
 const queryRoutes = require("./routes/queryRoutes");
 const authRoutes = require("./routes/authRoutes");
 require("dotenv").config();
+const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
@@ -31,7 +32,7 @@ app.use((req, res, next) => {
 
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
+    "GET, POST, PUT, DELETE, OPTIONS, PATCH"
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -82,6 +83,7 @@ app.get("/health", (req, res) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", queryRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Test database connection
 app.get("/api/health", async (req, res) => {
