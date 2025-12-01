@@ -40,7 +40,7 @@ function LoginPage() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 8 }}>
+    <Container maxWidth="sm" sx={{ mt: 6 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom align="center">
           🔐 Login

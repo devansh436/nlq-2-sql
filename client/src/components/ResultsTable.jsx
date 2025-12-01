@@ -222,7 +222,21 @@ function ResultsTable({ result }) {
               }}
             >
               <Table stickyHeader size="small">
-                <TableHead>
+                <TableHead
+                  sx={{
+                    "& .MuiTableCell-root": {
+                      bgcolor: "rgba(15, 23, 42, 0.98)", // solid dark
+                      color: "primary.light",
+                      fontWeight: 700,
+                      borderBottom: "2px solid rgba(96, 165, 250, 0.3)",
+                      textTransform: "uppercase",
+                      fontSize: "0.75rem",
+                      letterSpacing: "0.5px",
+                      zIndex: 2, // keep above body
+                    },
+                  }}
+                >
+                  {" "}
                   <TableRow>
                     {results &&
                       results.length > 0 &&

@@ -43,10 +43,12 @@ function Navbar() {
   const navItems = [
     { path: "/", label: "Home", icon: <HomeIcon /> },
     { path: "/tables", label: "Tables", icon: <StorageIcon /> },
-    { path: "/docs", label: "Docs", icon: <DescriptionIcon /> },
   ];
   // If admin, add admin item (ensure no duplicate path!)
-  if (user?.role === "ADMIN" && !navItems.some((item) => item.path === "/admin")) {
+  if (
+    user?.role === "ADMIN" &&
+    !navItems.some((item) => item.path === "/admin")
+  ) {
     navItems.push({
       path: "/admin",
       label: "Admin",
@@ -94,7 +96,13 @@ function Navbar() {
       <Container maxWidth="xl">
         <Toolbar sx={{ justifyContent: "space-between", py: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <MenuBookIcon sx={{ fontSize: 32, color: "primary.main" }} />
+            <IconButton>
+              <img
+                src="/image.png"
+                alt="icon"
+                style={{ width: 30, height: 30 }}
+              />
+            </IconButton>
             <Typography
               variant="h6"
               component={Link}
@@ -108,7 +116,7 @@ function Navbar() {
                 },
               }}
             >
-              Library NLQ
+              SpeakSQL
             </Typography>
           </Box>
 
