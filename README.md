@@ -18,8 +18,21 @@
 
 ## 🗄️ Directory Structure
 
-<pre> ```plaintext / ├── backend/ # Node.js/Express server, API, Gemini integration │ ├── config/ │ ├── routes/ │ ├── services/ │ ├── utils/ │ ├── api/index.js │ ├── server.js │ └── vercel.json ├── frontend/ # React Material-UI frontend │ ├── src/ │ ├── public/ │ └── package.json ``` </pre>
-
+<pre>
+├── backend/
+│   ├── config/
+│   ├── routes/
+│   ├── services/
+│   ├── utils/
+│   ├── api/
+│   │   └── index.js
+│   ├── server.js
+│   └── vercel.json
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   └── package.json
+</pre>
 
 
 ---
